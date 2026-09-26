@@ -1,8 +1,10 @@
 # Production SRE Lab — Release Catalog
 
+[![Phase 1 checks](https://github.com/mayamoh-indie/production-sre-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/mayamoh-indie/production-sre-lab/actions/workflows/ci.yml)
+
 A small internal release lookup service used to practice reliable platform delivery. Support engineers and deployment tools need to answer “which build is approved for matchmaking in production?” without depending on a CI server being available.
 
-**Status: Phase 1 local baseline.** The API, tests, request telemetry, Bandit, and Docker build/runtime have local verification. GitHub Actions is configured; hosted execution has not yet been verified. No AWS resources have been deployed. This is hands-on portfolio work, not a claim of operating a production service.
+**Status: Phase 1 local baseline.** The API, tests, request telemetry, Bandit, and Docker build/runtime have local verification. GitHub Actions has passed the Python and container jobs on GitHub-hosted Ubuntu runners. No AWS resources have been deployed. This is hands-on portfolio work, not a claim of operating a production service.
 
 The application deliberately does little: load an approved catalog, validate it, and answer lookups. Infrastructure, delivery, observability, and incident response are the evolving product. See [architecture and milestones](docs/architecture.md), [verification and interview notes](docs/portfolio-notes.md), and [AWS costs](docs/aws-costs.md).
 
@@ -77,8 +79,8 @@ Catalog input is a JSON array with exactly `service`, `environment`, `version`, 
 ./.venv/Scripts/python -m compileall -q .
 ```
 
-GitHub Actions runs Python checks and a container build/HTTP smoke job on pushes and pull requests. It has no cloud credentials or publishing step. A workflow file is not evidence of a successful hosted run.
+GitHub Actions runs Python checks and a container build/HTTP smoke job on pushes and pull requests. It has no cloud credentials or publishing step. See the [successful hosted verification](https://github.com/mayamoh-indie/production-sre-lab/actions/runs/36258075951) and [latest workflow runs](https://github.com/mayamoh-indie/production-sre-lab/actions).
 
 ## Continue the project
 
-Read [operating and troubleshooting](docs/runbook.md), [telemetry and proposed SLOs](docs/observability.md), and [security scope](docs/security.md). Next, verify hosted CI, then build the local Kubernetes/Helm milestone. Prometheus scraping, Grafana, OpenTelemetry traces, ArgoCD, Terraform, cloud deployment, burn alerts, and incident/postmortem evidence remain future work. Phase 1 does not satisfy the shared SRE readiness gate.
+Read [operating and troubleshooting](docs/runbook.md), [telemetry and proposed SLOs](docs/observability.md), and [security scope](docs/security.md). Next, build the local Kubernetes/Helm milestone. Prometheus scraping, Grafana, OpenTelemetry traces, ArgoCD, Terraform, cloud deployment, burn alerts, and incident/postmortem evidence remain future work. Phase 1 does not satisfy the shared SRE readiness gate.
