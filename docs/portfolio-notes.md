@@ -97,3 +97,9 @@ User requested another Docker/WSL check. Outside the sandbox, `docker version` r
 - `docker compose down --volumes --remove-orphans`: removed this project's container and network. `docker compose ps --all` showed no remaining project containers. The local image/build cache remains available for reuse.
 
 No application or container configuration change was needed. Docker runtime verification is now complete; this is still not a hosted GitHub Actions run, Kubernetes deployment, or AWS deployment.
+
+## Pre-publication review — 2026-09-26
+
+The user authorized a public GitHub repository. Reviewed all 22 tracked files; virtual environments, caches, credentials and private master-context files are not tracked. Gitleaks scanned all three existing commits with default rules and `--redact --log-opts=--all`: exit 0, no leaks found (47.56 KB scanned). Scanner image: `ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f`. A clean scan reduces risk; it does not prove that every possible secret would be detected.
+
+Publication is pending GitHub CLI authentication. Hosted workflow evidence will be recorded only after a real run.
