@@ -114,3 +114,9 @@ Public repository: [mayamoh-indie/production-sre-lab](https://github.com/mayamoh
 The user requested account-linked commit attribution. Initial commits used the configured name Yash Kaushik, but GitHub did not associate the configured email with the account. Changed author/committer email to `102919441+mayamoh-indie@users.noreply.github.com`, preserving each commit tree, message and timestamp; updated the newly published branch with an explicit force-with-lease. GitHub's commits API then confirmed `mayamoh-indie` for both author and committer on every commit. Repository-local Git identity now uses this address for future commits. No assistant co-author attribution was added.
 
 The initial successful run predates that metadata correction; the subsequent push triggers the same checks again. Future status is visible through the README workflow badge. No AWS resources were deployed, and the larger SRE readiness gate remains open.
+
+## Incremental delivery plan — 2026-09-26
+
+Added `implementation-plan.md` in response to the request for small, comprehensible changes. It maps the existing architecture phases into individual changes with dependencies, review questions, verification and milestone handoffs. Existing history remains intact. The next implementation is A1 (maintain CI action runtimes); this documentation change does not implement later infrastructure.
+
+Decision: pair a behavior change with its relevant tests/docs instead of splitting them into artificial commits. Separate independent concerns such as image scanning and SBOM generation. GitOps rollback must revert desired state; Helm rollback belongs to the earlier pre-Argo exercise. Learning checkpoint: explain why a healthy probe, a successful deployment and an SLO measurement prove different things.

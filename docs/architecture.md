@@ -36,6 +36,8 @@ Repository structure now: `src/release_catalog/` (validation/API), `data/` (synt
 
 ## Milestones and review gates
 
+For the ordered commit-sized steps, prerequisites and verification checkpoints within these phases, see the [implementation plan](implementation-plan.md). It is a plan, not evidence that later phases are built.
+
 | Phase | Deliverable and skills | Evidence required before accepting it |
 |---|---|---|
 | 1: Local baseline | Python 3.13, FastAPI, validation, testing, telemetry foundation, Docker/CI configuration, Bandit | Native server lookup/errors/metrics; tests/lint/security checks; explicit Docker/hosted-CI limitations |
