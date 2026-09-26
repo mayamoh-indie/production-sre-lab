@@ -1,0 +1,39 @@
+name: Phase 1 checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: 'requirements*.lock'
+      - run: python -m pip install -r requirements-dev.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python -m ruff format --check src tests
+      - run: python -m ruff check src tests
+      - run: python -m pytest -q
+      - run: python -m bandit -r src
+      - run: python -m compileall -q src tests
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose up --build --wait --wait-timeout 60
+      - name: Exercise container over HTTP
+        shell: bash
+        run: |
+          curl --fail --silent 'http://127.0.0.1:8000/v1/releases/matchmaking?environment=production' > release.json
+          python -c 'import json; assert json.load(open("release.json"))["version"] == "2026.09.25"'
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' 'http://127.0.0.1:8000/v1/releases/unknown?environment=production')" = 404
+          curl --fail --silent http://127.0.0.1:8000/metrics
+      - if: failure()
+        run: docker compose logs
+      - if: always()
+        run: docker compose down --volumes --remove-orphans

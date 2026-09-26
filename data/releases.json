@@ -1,0 +1,4 @@
+[
+  {"service": "matchmaking", "environment": "staging", "version": "2026.09.26-rc1", "commit": "0123456789012345678901234567890123456789"},
+  {"service": "matchmaking", "environment": "production", "version": "2026.09.25", "commit": "1234567890abcdef1234567890abcdef12345678"}
+]
