@@ -2,7 +2,7 @@
 
 A small internal release lookup service used to practice reliable platform delivery. Support engineers and deployment tools need to answer “which build is approved for matchmaking in production?” without depending on a CI server being available.
 
-**Status: Phase 1 local Python baseline.** The API, tests, request telemetry, and Bandit have local verification. Docker and GitHub Actions are configured; their execution has not yet been verified. No AWS resources have been deployed. This is hands-on portfolio work, not a claim of operating a production service.
+**Status: Phase 1 local baseline.** The API, tests, request telemetry, Bandit, and Docker build/runtime have local verification. GitHub Actions is configured; hosted execution has not yet been verified. No AWS resources have been deployed. This is hands-on portfolio work, not a claim of operating a production service.
 
 The application deliberately does little: load an approved catalog, validate it, and answer lookups. Infrastructure, delivery, observability, and incident response are the evolving product. See [architecture and milestones](docs/architecture.md), [verification and interview notes](docs/portfolio-notes.md), and [AWS costs](docs/aws-costs.md).
 
@@ -46,7 +46,7 @@ Expected statuses: **200**, **404**, **422**, **200**. On Linux/macOS use `curl`
 
 ## Docker path
 
-Requires a running Linux-container Docker daemon and Compose v2. This path is configured but not locally executed yet:
+Requires a running Linux-container Docker daemon and Compose v2 or later. This path was built and verified locally on Docker Desktop's Linux engine:
 
 ```powershell
 docker compose config
@@ -81,4 +81,4 @@ GitHub Actions runs Python checks and a container build/HTTP smoke job on pushes
 
 ## Continue the project
 
-Read [operating and troubleshooting](docs/runbook.md), [telemetry and proposed SLOs](docs/observability.md), and [security scope](docs/security.md). Next, verify Docker and CI, then build the local Kubernetes/Helm milestone. Prometheus scraping, Grafana, OpenTelemetry traces, ArgoCD, Terraform, cloud deployment, burn alerts, and incident/postmortem evidence remain future work. Phase 1 does not satisfy the shared SRE readiness gate.
+Read [operating and troubleshooting](docs/runbook.md), [telemetry and proposed SLOs](docs/observability.md), and [security scope](docs/security.md). Next, verify hosted CI, then build the local Kubernetes/Helm milestone. Prometheus scraping, Grafana, OpenTelemetry traces, ArgoCD, Terraform, cloud deployment, burn alerts, and incident/postmortem evidence remain future work. Phase 1 does not satisfy the shared SRE readiness gate.

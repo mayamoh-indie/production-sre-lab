@@ -18,7 +18,7 @@ Implemented: typed artifact validation and lookup, explicit 404/422 errors, fail
 
 Initial dependency installation hit sandbox socket restrictions. Retried through the approved network permission path and installed successfully into the project virtual environment. Initial API tests rejected the synthetic staging commit ID because its length was not 40; inspected the actual value length, fixed the fixture and reran the tests. Startup error chaining was removed so invalid catalog values do not appear in validation tracebacks.
 
-Docker client exists, but `docker version` could not connect to `//./pipe/docker_engine`; local Docker config access was also denied. Container configuration is not container execution evidence. No paid infrastructure was touched.
+The initial Docker check could not connect to `//./pipe/docker_engine`; local Docker config access was also denied. On the user-requested retry, sandbox checks still returned access denied, but approved execution outside the sandbox reached Docker Desktop successfully. The current blocker was sandbox access, not an unavailable engine. No paid infrastructure was touched.
 
 ## Verification ledger
 
@@ -36,7 +36,7 @@ Environment: Windows, Python **3.13.15**. Checks run on 2026-09-26; native HTTP 
 | `docker compose config --quiet` | Exit 0; Docker config permission warnings remain |
 | Workflow YAML parse and job-key check | Passed; this does not validate GitHub execution |
 | Native Uvicorn launch | Application startup complete; loopback port 8000 accepted real HTTP |
-| Docker build/start | Not executed: daemon unavailable |
+| Docker build/start | Follow-up: image built and Compose reported healthy; see Docker evidence below |
 | GitHub Actions | Configured, not executed or published |
 | AWS | Pricing research only; no deployed resources |
 
@@ -64,7 +64,7 @@ INFO:     {"event": "http_request", "request_id": "07a4b804-6655-41f6-a1d4-d72f0
 
 This single request timing is diagnostic evidence, not a benchmark or a measured latency SLO. The temporary native server was stopped after verification; no background service was left running. Both virtual environments are ignored by Git. The project is a standalone local repository with implementation and documentation commits; nothing was published.
 
-Phase 1 handoff: **native baseline complete**, with container-runtime and hosted-CI checks outstanding. The shared SRE readiness gate remains unmet: end-to-end delivery/observability, real SLO/alert/incident evidence, and the final portfolio review still belong to later phases.
+Phase 1 handoff: **native and container baseline complete**; hosted-CI checks remain outstanding. The shared SRE readiness gate remains unmet: end-to-end delivery/observability, real SLO/alert/incident evidence, and the final portfolio review still belong to later phases.
 
 ## Interview questions and defensible answers
 
@@ -78,8 +78,22 @@ Phase 1 handoff: **native baseline complete**, with container-runtime and hosted
 
 **What did the tests catch?** They rejected a malformed demo commit ID before the app could serve an invalid release artifact. Tests also cover bad JSON, null/blank/types, duplicates, unknown lookups, invalid parameters, telemetry cardinality, log redaction and server-error accounting.
 
-**What is still missing?** Verified containers/hosted CI, real scrape/dashboard/trace pipeline, Kubernetes/GitOps, an executed incident/postmortem, and cloud lifecycle evidence. These are planned, not completed skills claims.
+**What is still missing?** Hosted CI evidence, real scrape/dashboard/trace pipeline, Kubernetes/GitOps, an executed incident/postmortem, and cloud lifecycle evidence. These are planned, not completed skills claims.
 
 ## Next improvement and handoff
 
-First verify the container and hosted CI from a clean checkout. Then continue the explicitly separate local Kubernetes/Helm/GitOps phase, including scan/SBOM evidence and immutable image references. Final project descriptions, resume bullets and hiring-manager reviews are deferred until there is sufficient evidence across the full project.
+First verify hosted CI from a clean checkout. Then continue the explicitly separate local Kubernetes/Helm/GitOps phase, including scan/SBOM evidence and immutable image references. Final project descriptions, resume bullets and hiring-manager reviews are deferred until there is sufficient evidence across the full project.
+
+## Docker follow-up — 2026-09-26
+
+User requested another Docker/WSL check. Outside the sandbox, `docker version` reached Docker Desktop 4.90.0, Engine 29.7.2, linux/amd64, context `desktop-linux`. WSL enumeration succeeded: version 2, Ubuntu installed/stopped, `docker-desktop` running. Ubuntu itself was not started or modified.
+
+- `docker compose up --build --wait --wait-timeout 60`: exit 0; built the image and reported container healthy.
+- Real HTTP over the published loopback port: live/ready 200; known release 200 with version `2026.09.25`; unknown release 404; invalid environment 422; metrics 200. Request-ID headers were present on non-scrape responses.
+- Lookup counter series for 200, 404 and 422 each had value 1.0 after one request per case. Request events appeared in container logs.
+- `docker compose exec -T catalog id`: UID/GID 10001 (`appuser`).
+- `docker compose exec -T catalog python -m pip check`: no broken requirements.
+- Container inspection: read-only root filesystem true, capability drop `["ALL"]`, security option `["no-new-privileges:true"]`; published address `127.0.0.1:8000`.
+- `docker compose down --volumes --remove-orphans`: removed this project's container and network. `docker compose ps --all` showed no remaining project containers. The local image/build cache remains available for reuse.
+
+No application or container configuration change was needed. Docker runtime verification is now complete; this is still not a hosted GitHub Actions run, Kubernetes deployment, or AWS deployment.
