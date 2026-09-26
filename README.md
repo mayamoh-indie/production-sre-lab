@@ -18,6 +18,8 @@ flowchart LR
 
 ## Run locally
 
+New machine? Follow the [first-time setup guide](docs/local-setup.md) for installing tools, cloning, choosing Docker or Python, checking results and cleaning up. The [implementation plan](docs/implementation-plan.md) breaks future work into reviewable commits with verification checkpoints.
+
 Requires Python 3.13 and a terminal in this repository. The demo releases and commit IDs are synthetic. No credentials are needed.
 
 PowerShell:
